@@ -4,6 +4,7 @@ import SearchIcon from '@material-ui/icons/Search'
 import InputBase from '@material-ui/core/InputBase'
 import { Route, Link, useRouteMatch, useParams, Switch } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
+import { CategoryTabs } from './CategoryTabs'
 import ComicLogo from '../img/ComicClan.png'
 import ComicIcon from '../img/IconShape.png'
 
@@ -132,42 +133,52 @@ export default function MainSection() {
     
     }
 
+    const updateTabSelect = (item) => {
+        console.log(item)
+    }
+
     return (
         <Fragment>
                 <div className="main_section" style={{width: "100%", height: 1300, 
-                backgroundColor: "#333333"}}>
-                    <div style={{backgroundColor: "#535353", height: 73, width: "100%"}}>
-                        <div style={{marginRight: 20, marginLeft: 20, width: "30%", 
+                backgroundColor: "#333333", display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+                    <div style={{backgroundColor: "#535353", height: 73, width: "100%", display: 'flex', justifyContent: "center"}}>
+                        <div style={{width: "96%", 
                                     height: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start"}}>
-                            <img style={{minWidth: 30, width: '5%', marginRight: 10}} src={ComicIcon}></img>
-                            <img style={{minWidth: 150, width: '30%'}} src={ComicLogo}></img>
+                            <img style={{minWidth: 20, width: '2.17%', marginRight: 10, marginTop: 3}} src={ComicIcon}></img>
+                            <img style={{minWidth: 100, width: '9.76%'}} src={ComicLogo}></img>
                         </div>
                     </div>
-                    <div style={{backgroundColor: "pink", height: "100%", width: "100%"}}>
+                    <div style={{height: "100%", width: "96%"}}>
                         <div className={classes.search}>
                             <div className={classes.searchIcon}>
-                                <SearchIcon />
+                                <SearchIcon style={{width: 60, height: 32.4}}/>
                             </div>
-                                <InputBase placeholder="Search by book name" 
+                                <InputBase onChange={(text) => {handleChange(text)}} placeholder="Search by book name" 
                                     classes={{ root: classes.inputRoot, input: classes.inputInput,}}
                                     inputProps={{ 'aria-label': 'search' }}/>
                         </div>
-                        <Route path={'/'} exact component={Main}/>
-                        <Route path='/about' component={About}/>
-                        <Route path='/other' exact component={Other}/>
-                        <button><Link to="/" onClick={() => {updatePreviousRoute(window.location.href)}}>Home</Link></button>
-                        <button><Link to="/about" onClick={() => {updatePreviousRoute(window.location.href)}}>About</Link></button>
-                        <button><Link to="/other" onClick={() => {updatePreviousRoute(window.location.href)}}>Other</Link></button>
-                        <input onChange={(e) => handleChange(e)}></input>
-                        {searched ? searched.map((item, index) => {
-                            return (
-                                <div style={{display: "inline-block", margin: 10}}>
-                                    <h1 style={{marginTop: 0}}>{item.name}</h1>
-                                    <h2 style={{marginTop: 0}}>{item.name}</h2>
-                                </div>
-                            )
-                        }): undefined }
-                        <button onClick={() => {dispatch({type: 'update-saga-pusher'})}}>Comics</button>
+                        <div style={{display: 'flex', flexDirection: 'column'}}>
+                            <div style={{display: 'flex'}}>
+                                <CategoryTabs changeTab={updateTabSelect}/>
+                            </div>
+                            <div>
+                                <Route path={'/'} exact component={Main}/>
+                                <Route path='/about' component={About}/>
+                                <Route path='/other' exact component={Other}/>
+                                <button><Link to="/" onClick={() => {updatePreviousRoute(window.location.href)}}>Home</Link></button>
+                                <button><Link to="/about" onClick={() => {updatePreviousRoute(window.location.href)}}>About</Link></button>
+                                <button><Link to="/other" onClick={() => {updatePreviousRoute(window.location.href)}}>Other</Link></button>
+                                {searched ? searched.map((item, index) => {
+                                    return (
+                                        <div style={{display: "inline-block", margin: 10}}>
+                                            <h1 style={{marginTop: 0}}>{item.name}</h1>
+                                            <h2 style={{marginTop: 0}}>{item.name}</h2>
+                                        </div>
+                                    )
+                                }): undefined }
+                                <button onClick={() => {dispatch({type: 'update-saga-pusher'})}}>Comics</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
         </Fragment>
@@ -175,6 +186,7 @@ export default function MainSection() {
 }
 
 const useStyles = makeStyles(theme => ({
+    
     root: {
         flexGrow: 1,
     },
@@ -189,18 +201,21 @@ const useStyles = makeStyles(theme => ({
         },
     },
     search: {
+        display: 'flex',
         position: 'relative',
-        borderRadius: theme.shape.borderRadius,
-        backgroundColor: fade(theme.palette.common.white, 0.15),
+        borderStyle: 'solid',
+        borderRadius: 8,
+        borderWidth: 3,
+        backgroundColor: fade('#333333', 0.15),
         '&:hover': {
-        backgroundColor: fade(theme.palette.common.white, 0.25),
+        backgroundColor: fade('#333333', 0.25),
         },
-        marginTop: 20,
-        marginLeft: 20,
-        marginRight: 10,
+        borderColor: '#777777',
+        marginTop: 28,
         [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(1),
-        width: '100%',
+        width: '99.6%',
+        height: 54,
+        marginBottom: 30,
         },
     },
     searchIcon: {
@@ -211,20 +226,17 @@ const useStyles = makeStyles(theme => ({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        color: '#777777',
     },
     inputRoot: {
         color: 'inherit',
+        width: '100%'
     },
     inputInput: {
-        borderStyle: 'solid',
-        padding: theme.spacing(1, 1, 1, 7),
-        transition: theme.transitions.create('width'),
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-        width: 120,
-        '&:focus': {
-            width: 200,
-        },
-        },
+        marginLeft: 56,
+        color: '#777777',
+        marginTop: -3,
+        fontSize: 20,
+        fontWeight: 'heavy',
     },
     }));
