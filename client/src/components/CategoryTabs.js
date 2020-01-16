@@ -26,7 +26,8 @@ export const CategoryTabs = (props) => {
         let item = buttonTabs.filter((item) => {
             return item.path === window.location.pathname
         })
-        changeClickStatuses(item[0])
+        if (item.length > 0)
+            changeClickStatuses(item[0])
     },[])
 
     return (
