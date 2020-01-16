@@ -1,17 +1,17 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import { fade, makeStyles } from '@material-ui/core/styles'
+import { Route, Link, useRouteMatch, useParams, Switch } from 'react-router-dom'
 import Button from '@material-ui/core/Button'
 import Fab from '@material-ui/core/Fab'
 
 export const CategoryTabs = (props) => {
-
     const classes = useStyles()
     const [buttonTabs, updateButtons] = useState([
-        {name:"Year", selected: true}, {name: "Writer", selected: false}, 
-        {name: "Artist", selected: false}, {name: "Owner", selected: false}, 
-        {name: "Random", selected: false}])
+        {name:"Year", selected: true, path: '/year'}, {name: "Writer", selected: false, path: '/writer'}, 
+        {name: "Artist", selected: false, path: '/artist'}, {name: "Owner", selected: false, path: '/owner'}, 
+        {name: "Random", selected: false, path: '/random'}])
 
-    const handleClickStatuses = (item) => {
+    const changeClickStatuses = (item) => {
         let newButtons = JSON.parse(JSON.stringify(buttonTabs))
         newButtons.map((button, index) => {
             if (button.name !== item.name)
@@ -22,19 +22,26 @@ export const CategoryTabs = (props) => {
         updateButtons(newButtons)
         props.changeTab(item)
     }
+    useEffect(() => {
+        let item = buttonTabs.filter((item) => {
+            return item.path === window.location.pathname
+        })
+        changeClickStatuses(item[0])
+    },[])
 
     return (
         <Fragment>
             {buttonTabs ? buttonTabs.map((item, index) => {
                 return ( item.selected ?
                     <label htmlFor="text-button-file">
-                        <Fab size="small" classes={{ root: classes.inputRootSelected}} onClick={() => {handleClickStatuses(item)}} style={{textColor: 'purple', marginLeft: 5, marginRight: 5, backgroundColor: "#F15454"}} 
+                        <Fab size="small" classes={{ root: classes.inputRootSelected}} onClick={() => {changeClickStatuses(item)}} style={{textColor: 'purple', marginLeft: 5, marginRight: 5, backgroundColor: "#F15454"}} 
                             variant={item.selected ? "contained":null} component="span">{item.name}</Fab>
                     </label> :
                     <label htmlFor="text-button-file">
-                        <Button classes={{ root: classes.inputRootUnSelected}} onClick={() => {handleClickStatuses(item)}} 
+                        <Link style={{ textDecoration: 'none' }} to={item.path} onClick={() => {/*updatePreviousRoute(window.location.href)*/}}>
+                            <Button classes={{ root: classes.inputRootUnSelected}} onClick={() => {changeClickStatuses(item)}} 
                         style={{marginLeft: 5, marginRight: 5}} 
-                        variant={item.selected ? "contained":null} component="span">{item.name}</Button>
+                        variant={item.selected ? "contained":null} component="span">{item.name}</Button></Link>
                     </label> 
                 )
             }): undefined}

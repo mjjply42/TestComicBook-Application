@@ -18,13 +18,13 @@ function* hydrateComicState() {
 
     //This hydrates the store once the data has been recieved
     //from the fetch
-    yield put({ type: 'update-test-saga', data: result})
+    yield put({ type: 'update-comics', data: result})
 }
 
 function* getComicsSaga() {
     //After catching the "update-saga-pusher", we call the
     //generator to make the fetch call
-    yield takeLatest('update-saga-pusher', hydrateComicState)
+    yield takeLatest('update-comics-saga-pusher', hydrateComicState)
 }
 
 export default function* rootSaga() {

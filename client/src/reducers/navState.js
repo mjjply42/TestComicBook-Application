@@ -4,12 +4,12 @@ const defaultState = {
 
 const navState = (state = defaultState, action) => {
     switch (action.type) {
-        case 'update-test-saga':
+        case 'update-comics':
             return {
                 ...state,
                 comics: action.data
             }
-        case 'update-saga-pusher':
+        case 'update-comics-saga-pusher':
             return state
         default:
             return state
