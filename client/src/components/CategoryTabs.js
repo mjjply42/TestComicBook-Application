@@ -20,7 +20,6 @@ export const CategoryTabs = (props) => {
                 button.selected = true
         })
         updateButtons(newButtons)
-        console.log("ITE ", item)
         props.changeTab(item)
     }
     useEffect(() => {
