@@ -35,6 +35,7 @@ export default function MainSection() {
         {name: "Cat"}, {name: "Cattle"},
     ])
     const [sorted, updateSortSet] = useState([])
+    const bookpageSignal = useSelector(state => state.navState.bookpage)
     const [bookPageRoute, updateBookPageRoute] = useState("")
     const [currentKey, updateCurrentKey] = useState()
     let routeSource = useRouteMatch()
@@ -66,6 +67,10 @@ export default function MainSection() {
         }
     }, [comicsStore])
 
+    useEffect(() => {
+        console.log("SIGNAL ", bookpageSignal)
+    },[bookpageSignal])
+
     const getCurrentBookRoute = () => {
         if (!window.location.pathname.split("/").includes('bookpage'))
             return
@@ -87,16 +92,11 @@ export default function MainSection() {
         if (!validSorts.includes(key))
             return
         if (key === 'random')
-            return
+            key = 'publication'
         updateCurrentKey(key)
         if (key === "year")
         {
-            let searchSort = ""
-            if (source === "search")
-                searchSort = JSON.parse(JSON.stringify(array))
-            else
-                searchSort = JSON.parse(JSON.stringify(comicsStore))
-            arr = searchSort.sort(function(a, b) {
+            arr = array.sort(function(a, b) {
                 return b[key.trim()] - a[key.trim()];
             })
             arr.map((item, ind) => {
@@ -162,17 +162,17 @@ export default function MainSection() {
         )
     }
 
-    const createUrlForBookPage = (item) => {
-        console.log(item)
-        let itemSplit = item.name.split(" ")
-        let urlPath = itemSplit.join("?")
-        let pathname = window.location.pathname.split("/")[1]
-        updateBookPageRoute(`/${urlPath}`)
-        return `${urlPath}`
-    }
 
     const YearGeneral = () => {
         let year = 0
+        const createUrlForBookPage = (item) => {
+            console.log(item)
+            let itemSplit = item.name.split(" ")
+            let urlPath = itemSplit.join("?")
+            let pathname = window.location.pathname.split("/")[1]
+            //updateBookPageRoute(`/${urlPath}`)
+            return `${urlPath}`
+        }
         return (<Fragment>
                 {sorted.length > 0 &&
                 sorted.map((item, index) => {
@@ -183,8 +183,7 @@ export default function MainSection() {
                             {item.map((it, index) => {
                                 return (
                                     <Grid item xs={5} sm={4} md={3} lg={2} xl={1} style={{}}>
-                                        <Link onClick={() => {window.scrollTo(0)}} style={{ textDecoration: 'none' }} to={`/bookpage/Dog?Boy?#310}`} onClick={() => {/*updatePreviousRoute(window.location.href)*/}}>
-                                    <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
+                                    <img onClick={() => {window.location.href = `/bookpage/${createUrlForBookPage(it)}`}} style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
                                     <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{it.name} </Typography>
                                     <div style={{display: 'flex', height: 100}}>
                                         <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
@@ -193,7 +192,6 @@ export default function MainSection() {
                                             <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{it.owner}</p>
                                         </Typography>
                                     </div>
-                                    </Link>
                                     </Grid>
                                 )
                             })
@@ -211,7 +209,7 @@ export default function MainSection() {
 
     const BookPage = () => {    
         //let comicItem = getCurrentBookRoute()
-        //updateCurrentRoute('/bookpage')
+        dispatch({type: 'update-bookpage-signal', data: true})
         if (currentRoute)
             console.log(currentRoute)
         return (
@@ -272,7 +270,7 @@ export default function MainSection() {
                 <div style={{display: 'flex', marginTop: 40, flexDirection: 'row'}}>
                     <Typography style={{fontSize: 32, color: '#AAAAAA'}}>Other Random Books</Typography>
                 </div>
-                <Random count={(comicsStore ? comicsStore.length -1 :25)}/>
+                <Random page={"book"} count={(comicsStore ? comicsStore.length -1 :25)} sorted={sorted}/>
             </div>
         )
     }
@@ -308,7 +306,7 @@ export default function MainSection() {
                         </div>
                     </div>
                     <div style={{height: "100%", width: "96%"}}>
-                        { currentRoute !== "/bookpage" && <div className={classes.search}>
+                        {!bookpageSignal && <div className={classes.search}>
                             <div className={classes.searchIcon}>
                                 <SearchIcon style={{width: 60, height: 32.4}}/>
                             </div>
@@ -318,15 +316,15 @@ export default function MainSection() {
                         </div>}
                         <div style={{display: 'flex', flexDirection: 'column'}}>
                             <div style={{display: 'flex'}}>
-                                {currentRoute !== "/bookpage" && <CategoryTabs changeTab={updateTabSelect}/>}
+                                {!bookpageSignal && <CategoryTabs changeTab={updateTabSelect}/>}
                             </div>
                             <div>
-                                <Route path={'/year' || '/'} exact component={Year}/>
-                                <Route path='/writer' exact component>< Writer sorted={(sorted ? sorted : [])} /></Route>
-                                <Route path='/artist' exact component><Artist sorted={(sorted ? sorted : [])}/></Route>
-                                <Route path='/owner' exact component> <Owner sorted={(sorted ? sorted : [])}/></Route>
-                                <Route path='/random' exact component><Random count={(comicsStore ? comicsStore.length -1 :25)} /> </Route >
-                                <Route path='/bookpage' component><BookPage name={bookPageRoute}/></Route>
+                                <Route onClick={() => {updateCurrentRoute('/year')}} path={'/year' || '/'} exact component={Year}/>
+                                <Route onClick={() => {updateCurrentRoute('/writer')}} path='/writer' exact component>< Writer sorted={(sorted ? sorted : [])} /></Route>
+                                <Route onClick={() => {updateCurrentRoute('/artist')}} path='/artist' exact component><Artist sorted={(sorted ? sorted : [])}/></Route>
+                                <Route onClick={() => {updateCurrentRoute('/owner')}} path='/owner' exact component> <Owner sorted={(sorted ? sorted : [])}/></Route>
+                                <Route onClick={() => {updateCurrentRoute('/random')}} path='/random' exact component><Random sorted={sorted} count={(comicsStore ? comicsStore.length -1 :25)} /> </Route >
+                                <Route onClick={() => {updateCurrentRoute('/bookpage')}} path='/bookpage' component><BookPage name={bookPageRoute}/></Route>
                             </div>
                         </div>
                     </div>

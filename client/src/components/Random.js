@@ -28,7 +28,7 @@ export const Random = (props) => {
         if (comicsStore.length > 0)
         {
             let i = 0
-            while (i < props.count)
+            while (i < (props.page === 'book' ? 6 : props.count))
             {
                 let result = Math.floor((Math.random() * comicsStore.length-1) + 1)
                 if (!valueArray.includes(result))
@@ -43,6 +43,15 @@ export const Random = (props) => {
 
     console.log("Here at random", valueArray)
     let otherMatch = useRouteMatch()
+
+    const createUrlForBookPage = (item) => {
+        console.log(item)
+        let itemSplit = item.name.split(" ")
+        let urlPath = itemSplit.join("?")
+        let pathname = window.location.pathname.split("/")[1]
+        //updateBookPageRoute(`/${urlPath}`)
+        return `${urlPath}`
+    }
     console.log(otherMatch)
     if (comicsStore.length < 1)
         return
@@ -54,8 +63,8 @@ export const Random = (props) => {
                 randomArray.map((item, index) => {
                     return (
                         <Grid item xs={6} sm={4} md={3} lg={2} xl={1} style={{height: 550, minHeight: 450, height: 400}}>
-                            <Link  style={{ textDecoration: 'none' }} to={`/bookpage/Dog?Boy?#310`}>
-                            <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
+                            
+                            <img onClick={() => {window.location.href = `/bookpage/${createUrlForBookPage(comicsStore[item])}`}} style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
                             <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{comicsStore[item].name} </Typography>
                             <div style={{display: 'flex', height: 100}}>
                                 <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
@@ -64,7 +73,6 @@ export const Random = (props) => {
                                     <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{comicsStore[item].owner}</p>
                                     </Typography>
                             </div>
-                            </Link>
                         </Grid>
                     )
                 })

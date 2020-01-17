@@ -36,6 +36,16 @@ export const Owner = (props) => {
 
 export const OwnerGeneral = (props) => {
     console.log("Here at owner")
+
+    const createUrlForBookPage = (item) => {
+        console.log(item)
+        let itemSplit = item.name.split(" ")
+        let urlPath = itemSplit.join("?")
+        let pathname = window.location.pathname.split("/")[1]
+        //updateBookPageRoute(`/${urlPath}`)
+        return `${urlPath}`
+    }
+
     return (<Fragment>
         <Grid container
         direction="row"
@@ -45,8 +55,7 @@ export const OwnerGeneral = (props) => {
         props.sorted.map((item, index) => {
             return (
                 <Grid item xs={6} sm={4} md={3} lg={2} xl={1} style={{height: 550, minHeight: 450, height: 400}}>
-                            <Link  style={{ textDecoration: 'none' }} to={`/bookpage/Dog?Boy?#310`}>
-                            <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
+                            <img onClick={() => {window.location.href = `/bookpage/${createUrlForBookPage(item)}`}} style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
                             <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{item.name} </Typography>
                             <div style={{display: 'flex', height: 100}}>
                                 <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
@@ -55,7 +64,6 @@ export const OwnerGeneral = (props) => {
                                     <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{item.owner}</p>
                                     </Typography>
                             </div>
-                            </Link>
                         </Grid>
             )
         })}
