@@ -13,6 +13,8 @@ import { CategoryTabs } from './CategoryTabs'
 import ComicLogo from '../img/ComicClan.png'
 import ComicIcon from '../img/IconShape.png'
 import BlankIcon from '../img/Rectangle.png'
+import EmptyStarIcon from '../img/emptyStar.png'
+import FullStarIcon from '../img/fullStar.png'
 
 const validSorts = ["year", "owner", "artist", "writer", "random"]
 
@@ -209,23 +211,62 @@ export default function MainSection() {
             console.log(currentRoute)
         return (
             <div>
-                <div style={{backgroundColor: "red", display: 'flex', marginTop: 87}}>
+                <div style={{display: 'flex', marginTop: 40, flexDirection: 'row'}}>
                     <ChevronLeftIcon onClick={() => {history.goBack()}} style={{color: "#777777"}}/>
-                    <Typography onClick={() => {history.goBack()}}>Back to collection</Typography>
+                    <Typography style={{color: '#777777'}} onClick={() => {history.goBack()}}>Back to collection</Typography>
                 </div>
                 {currentRoute &&
-                <Fragment>
-                    <div>
-                        <Typography>{`${currentRoute[0].name} (${currentRoute[0].year})`}</Typography>
+                <Fragment><div style={{ display: 'flex', flexWrap: 'wrap', marginTop: 30, justifyContent: 'center'}}>
+                    <img style={{minWidth: 300, minHeight: 200/*, width: 336, height: 517*/, width: "24.2%", height: 517}} src={BlankIcon}></img>
+                    <div style={{marginLeft: 20, display: 'flex', flexDirection: 'column', width: "74%"}}>
+                        <div style={{display: 'flex', flexWrap: 'wrap', alignItems: 'center'}}>
+                        <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center', width: "60%"}}>
+                            <Typography style={{fontSize: '2rem', color: '#AAAAAA'}}>{`${currentRoute[0].name} (${currentRoute[0].year})`}</Typography>
+                        </div>
+                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', width: '40%', marginTop: 5}}>
+                        {
+                            
+                            [0, 1, 2, 3, 4].map((item, index) => {
+                                if (currentRoute[0].rating - index >= 0)
+                                    return (<img style={{minWidth: 10, height: 30}} src={FullStarIcon}></img>)
+                                else
+                                    return (<img style={{minWidth: 10, height: 24, marginTop: -3}} src={EmptyStarIcon}></img>)
+                            })
+                        }
+                        </div>
+                        </div>
+                        <div style={{display: 'flex', flexDirection: 'column', minWidth: 300,}}>
+                        <Typography style={{textAlign: 'left', display: 'flex', alignSelf: 'flex-start'}}>
+                            <p style={{color: '#999999', marginRight: 3}}>Writer:</p>
+                            <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{currentRoute[0].writer}</p>
+                        </Typography>
+                        <Typography style={{textAlign: 'left', display: 'flex', alignSelf: 'flex-start'}}>
+                            <p style={{color: '#999999', marginRight: 3}}>Artist:</p>
+                            <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{currentRoute[0].artist}</p>
+                        </Typography>
+                        <Typography style={{textAlign: 'left', display: 'flex', alignSelf: 'flex-start'}}>
+                            <p style={{color: '#999999', marginRight: 3}}>Publication:</p>
+                            <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{currentRoute[0].publication}</p>
+                        </Typography>
+                        <Typography style={{textAlign: 'left', display: 'flex', alignSelf: 'flex-start'}}>
+                            <p style={{color: '#999999', marginRight: 3}}>Owner:</p>
+                            <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{currentRoute[0].owner}</p>
+                        </Typography>
+                        <br></br>
+                        <Typography style={{color: '#CCCCCC', textAlign: 'left'}}>{currentRoute[0].summary}</Typography>
                     </div>
-                    <Typography>Writer: {currentRoute[0].writer}</Typography>
-                    <Typography>Artist: {currentRoute[0].artist}</Typography>
-                    <Typography>Publication: {currentRoute[0].publication}</Typography>
-                    <Typography>Owner: {currentRoute[0].owner}</Typography>
+                    </div>
+                    </div>
                     <br></br>
-                    <Fragment>{currentRoute[0].summary}</Fragment>
+                    <br></br>
+                    <br></br>
+                    <Divider style={{backgroundColor: "#535353"}} heavy/>
+                    <Divider style={{backgroundColor: "#535353"}} heavy/>
                 </Fragment>
                 }
+                <div style={{display: 'flex', marginTop: 40, flexDirection: 'row'}}>
+                    <Typography style={{fontSize: 32, color: '#AAAAAA'}}>Other Random Books</Typography>
+                </div>
             </div>
         )
     }
@@ -256,6 +297,7 @@ export default function MainSection() {
             sorted.map((item, index) => {
                 return (
                     <Grid item xs={5} sm={4} md={3} lg={2} xl={1} style={{}}>
+                        <Link onClick={() => {window.scrollTo(0)}} style={{ textDecoration: 'none' }} to={`/bookpage/${createUrlForBookPage(item)}`} onClick={() => {/*updatePreviousRoute(window.location.href)*/}}>
                         <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
                         <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{item.name} </Typography>
                         <div style={{display: 'flex', height: 100}}>
@@ -265,6 +307,7 @@ export default function MainSection() {
                                 <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{item.owner}</p>
                                 </Typography>
                         </div>
+                        </Link>
                     </Grid>
                 )
             })}
@@ -299,6 +342,7 @@ export default function MainSection() {
                 return (
                     <Grid item xs={5} sm={4} md={3} lg={2} xl={1} style={{}}>
                         <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
+                        <Link onClick={() => {window.scrollTo(0)}} style={{ textDecoration: 'none' }} to={`/bookpage/${createUrlForBookPage(item)}`} onClick={() => {/*updatePreviousRoute(window.location.href)*/}}>
                         <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{item.name} </Typography>
                         <div style={{display: 'flex', height: 100}}>
                             <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
@@ -307,6 +351,7 @@ export default function MainSection() {
                                 <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{item.owner}</p>
                                 </Typography>
                         </div>
+                        </Link>
                     </Grid>
                 )
             })}
@@ -347,6 +392,7 @@ export default function MainSection() {
                 return (
                     <Grid item xs={6} sm={4} md={3} lg={2} xl={1} style={{}}>
                         <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
+                        <Link onClick={() => {window.scrollTo(0)}} style={{ textDecoration: 'none' }} to={`/bookpage/${createUrlForBookPage(item)}`} onClick={() => {/*updatePreviousRoute(window.location.href)*/}}>
                         <Typography noWrap={false} style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{item.name} </Typography>
                         <div style={{display: 'flex', height: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>
                             <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
@@ -355,6 +401,7 @@ export default function MainSection() {
                                 <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{item.owner}</p>
                                 </Typography>
                         </div>
+                        </Link>
                     </Grid>
                 )
             })}
@@ -403,17 +450,17 @@ export default function MainSection() {
                         </div>
                     </div>
                     <div style={{height: "100%", width: "96%"}}>
-                        <div className={classes.search}>
+                        { currentRoute === "/bookpage" && <div className={classes.search}>
                             <div className={classes.searchIcon}>
                                 <SearchIcon style={{width: 60, height: 32.4}}/>
                             </div>
                                 <InputBase onChange={(text) => {handleChange(text)}} placeholder="Search by book name" 
                                     classes={{ root: classes.inputRoot, input: classes.inputInput,}}
                                     inputProps={{ 'aria-label': 'search' }}/>
-                        </div>
+                        </div>}
                         <div style={{display: 'flex', flexDirection: 'column'}}>
                             <div style={{display: 'flex'}}>
-                                {currentRoute !== "/bookpage" && <CategoryTabs changeTab={updateTabSelect}/>}
+                                {currentRoute === "/bookpage" && <CategoryTabs changeTab={updateTabSelect}/>}
                             </div>
                             <div>
                                 <Route path={'/year' || '/'} exact component={Year}/>
@@ -430,7 +477,6 @@ export default function MainSection() {
                                         </div>
                                     )
                                 }): undefined }
-                                <button onClick={() => {dispatch({type: 'update-saga-pusher'})}}>Comics</button>
                             </div>
                         </div>
                     </div>
