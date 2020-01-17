@@ -81,15 +81,22 @@ export default function MainSection() {
         let newYearArr = []
         let year = 0
         let index = 0
+        console.log("KEY ", key)
         if (!comicsStore.length > 0)
             return
         if (!validSorts.includes(key))
             return
         if (key === 'random')
             return
+        updateCurrentKey(key)
         if (key === "year")
         {
-            arr = comicsStore.sort(function(a, b) {
+            let searchSort = ""
+            if (source === "search")
+                searchSort = JSON.parse(JSON.stringify(array))
+            else
+                searchSort = JSON.parse(JSON.stringify(comicsStore))
+            arr = searchSort.sort(function(a, b) {
                 return b[key.trim()] - a[key.trim()];
             })
             arr.map((item, ind) => {
@@ -104,22 +111,12 @@ export default function MainSection() {
                 
             })
             updateSortSet(newYearArr)
-            newYearArr[0].push(arr[0])
-            newYearArr[0].push(arr[0])
-            newYearArr[0].push(arr[0])
-            newYearArr[0].push(arr[0])
-            newYearArr[0].push(arr[0])
-            newYearArr[0].push(arr[0])
-            newYearArr[0].push(arr[0])
-            newYearArr[0].push(arr[0])
-            newYearArr[0].push(arr[0])
-            newYearArr[0].push(arr[0])
-            newYearArr[0].push(arr[0])
-            newYearArr[0].push(arr[0])
-            newYearArr[0].push(arr[0])
         }
-        else if (source === "search")
+        else if (source === "search" && key !== 'year')
+        {
+            console.log(array, key)
             updateSortSet(JSON.parse(JSON.stringify(array.sort(await dynamicSort(key)))))
+        }
         else
         {
             arr = JSON.parse(JSON.stringify(array.sort(await dynamicSort(key))))
