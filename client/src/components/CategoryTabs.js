@@ -7,7 +7,7 @@ import Fab from '@material-ui/core/Fab'
 export const CategoryTabs = (props) => {
     const classes = useStyles()
     const [buttonTabs, updateButtons] = useState([
-        {name:"Year", selected: true, path: '/year'}, {name: "Writer", selected: false, path: '/writer'}, 
+        {name:"Year", selected: false, path: '/year'}, {name: "Writer", selected: false, path: '/writer'}, 
         {name: "Artist", selected: false, path: '/artist'}, {name: "Owner", selected: false, path: '/owner'}, 
         {name: "Random", selected: false, path: '/random'}])
 

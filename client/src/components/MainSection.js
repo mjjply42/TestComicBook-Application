@@ -16,7 +16,7 @@ import BlankIcon from '../img/Rectangle.png'
 import EmptyStarIcon from '../img/emptyStar.png'
 import FullStarIcon from '../img/fullStar.png'
 
-const validSorts = ["year", "owner", "artist", "writer", "random"]
+const validSorts = ["year", "owner", "artist", "writer", "random", ""]
 
 export default function MainSection() {
     const classes = useStyles()
@@ -40,6 +40,8 @@ export default function MainSection() {
     useEffect(() => {
         dispatch({type: 'update-comics-saga-pusher'})
         updatePreviousRoute(window.location.href)
+        if (window.location.pathname === "/")
+            return
         updateCurrentKey(window.location.pathname.split("/")[1])
     }, [])
 
@@ -78,6 +80,8 @@ export default function MainSection() {
         if (!comicsStore.length > 0)
             return
         if (!validSorts.includes(key))
+            return
+        if (key === 'random')
             return
         if (key === "year")
         {
@@ -147,18 +151,15 @@ export default function MainSection() {
                             )
                         }):undefined}
                     </Route>*/}
-                    <Route render={ () => {
-                    return( 
-                        <div style={{marginTop: 30}}>
-                            <YearGeneral />
-                        </div>
-                    )}}/>
+                    <Route render={ () => 
+                            <YearGeneral />}/>
                 </Switch>
             </div>
         )
     }
 
     const createUrlForBookPage = (item) => {
+        console.log(item)
         let itemSplit = item.name.split(" ")
         let urlPath = itemSplit.join("?")
         let pathname = window.location.pathname.split("/")[1]
@@ -174,11 +175,11 @@ export default function MainSection() {
                     return (
                         <Fragment>
                             <h1 style={{textAlign: 'left', color: '#AAAAAA'}}>{item[0].year}</h1>
-                            <Grid container direction="row" justify="flex-start" alignItems="flex-start">
+                            <Grid container direction="row" justify="flex-start" alignItems="flex-start" spacing={2}>
                             {item.map((it, index) => {
                                 return (
                                     <Grid item xs={5} sm={4} md={3} lg={2} xl={1} style={{}}>
-                                        <Link onClick={() => {window.scrollTo(0)}} style={{ textDecoration: 'none' }} to={`/bookpage/${createUrlForBookPage(it)}`} onClick={() => {/*updatePreviousRoute(window.location.href)*/}}>
+                                        <Link onClick={() => {window.scrollTo(0)}} style={{ textDecoration: 'none' }} to={`/bookpage/Dog?Boy?#310}`} onClick={() => {/*updatePreviousRoute(window.location.href)*/}}>
                                     <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
                                     <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{it.name} </Typography>
                                     <div style={{display: 'flex', height: 100}}>
@@ -220,10 +221,10 @@ export default function MainSection() {
                     <img style={{minWidth: 300, minHeight: 200/*, width: 336, height: 517*/, width: "24.2%", height: 517}} src={BlankIcon}></img>
                     <div style={{marginLeft: 20, display: 'flex', flexDirection: 'column', width: "74%"}}>
                         <div style={{display: 'flex', flexWrap: 'wrap', alignItems: 'center'}}>
-                        <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center', width: "60%"}}>
+                        <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center', maxWidth: '80%', minWidth: '50%'}}>
                             <Typography style={{fontSize: '2rem', color: '#AAAAAA'}}>{`${currentRoute[0].name} (${currentRoute[0].year})`}</Typography>
                         </div>
-                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', width: '40%', marginTop: 5}}>
+                        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-start', minWidth: '10%', marginTop: 5, marginLeft: 20}}>
                         {
                             
                             [0, 1, 2, 3, 4].map((item, index) => {
@@ -253,7 +254,7 @@ export default function MainSection() {
                             <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{currentRoute[0].owner}</p>
                         </Typography>
                         <br></br>
-                        <Typography style={{color: '#CCCCCC', textAlign: 'left'}}>{currentRoute[0].summary}</Typography>
+                        <Typography style={{color: '#CCCCCC', textAlign: 'left', fontSize: 16}}>{currentRoute[0].summary}</Typography>
                     </div>
                     </div>
                     </div>
@@ -267,6 +268,62 @@ export default function MainSection() {
                 <div style={{display: 'flex', marginTop: 40, flexDirection: 'row'}}>
                     <Typography style={{fontSize: 32, color: '#AAAAAA'}}>Other Random Books</Typography>
                 </div>
+                <Random count={(comicsStore ? comicsStore.length -1 :25)}/>
+            </div>
+        )
+    }
+
+    const Random = (props) => {
+        let valueArray = []
+        const [randomArray, updateRandomArray] = useState([])
+
+        useEffect(() => {
+            if (comicsStore.length > 0)
+            {
+                let i = 0
+                while (i < props.count)
+                {
+                    let result = Math.floor((Math.random() * comicsStore.length-1) + 1)
+                    if (!valueArray.includes(result))
+                        valueArray.push(result)
+                    else
+                        continue
+                    i++
+                }
+            }
+            updateRandomArray(valueArray)
+        },[comicsStore])
+
+        console.log("Here at random", valueArray)
+        let otherMatch = useRouteMatch()
+        console.log(otherMatch)
+        if (comicsStore.length < 1)
+            return
+        return (<div>
+            <Fragment>
+            <Grid container direction="row" justify="flex-start" alignItems="flex-start" spacing={2} style={{marginTop: 30}}>
+    
+                {randomArray.length > 0 &&
+                    randomArray.map((item, index) => {
+                        return (
+                            <Grid item xs={6} sm={4} md={3} lg={2} xl={1} style={{height: 550, minHeight: 450, height: 400}}>
+                                <Link  style={{ textDecoration: 'none' }} to={`/bookpage/Dog?Boy?#310`}>
+                                <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
+                                <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{comicsStore[item].name} </Typography>
+                                <div style={{display: 'flex', height: 100}}>
+                                    <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
+                                        <p style={{color: '#999999', marginRight: 3}}>Owned</p>
+                                        <p style={{color: '#999999', marginRight: 3}}>By</p>
+                                        <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{comicsStore[item].owner}</p>
+                                        </Typography>
+                                </div>
+                                </Link>
+                            </Grid>
+                        )
+                    })
+                }
+            </Grid>
+            </Fragment>
             </div>
         )
     }
@@ -274,17 +331,9 @@ export default function MainSection() {
     const Writer = () => {
         let aboutMatch = useRouteMatch()
         return (
-            <div style={{marginTop: 99}}>
+            <div style={{marginTop: 30}}>
                 <Switch>
-                    <Route render={ () => {
-                    return( 
-                        <Grid container spacing={3}
-                        direction="row"
-                        justify="space-around"
-                        alignItem="center">
-                            <WriterGeneral />
-                        </Grid>
-                    )}}/>
+                    <Route render={ () => <WriterGeneral />}/>
                 </Switch>
             </div>
         )
@@ -293,41 +342,38 @@ export default function MainSection() {
     const WriterGeneral = () => {
         console.log("Here at writer")
         return (<Fragment>
+            <Grid container
+            direction="row"
+            justify="space-between"
+            alignItems="center" spacing={2} style={{marginTop: 22}}>
             {sorted.length > 0 &&
             sorted.map((item, index) => {
                 return (
-                    <Grid item xs={5} sm={4} md={3} lg={2} xl={1} style={{}}>
-                        <Link onClick={() => {window.scrollTo(0)}} style={{ textDecoration: 'none' }} to={`/bookpage/${createUrlForBookPage(item)}`} onClick={() => {/*updatePreviousRoute(window.location.href)*/}}>
-                        <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
-                        <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{item.name} </Typography>
-                        <div style={{display: 'flex', height: 100}}>
-                            <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
-                                <p style={{color: '#999999', marginRight: 3}}>Owned</p>
-                                <p style={{color: '#999999', marginRight: 3}}>By</p>
-                                <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{item.owner}</p>
-                                </Typography>
-                        </div>
-                        </Link>
-                    </Grid>
+                    <Grid item xs={6} sm={4} md={3} lg={2} xl={1} style={{height: 550, minHeight: 450, height: 400}}>
+                                <Link  style={{ textDecoration: 'none' }} to={`/bookpage/Dog?Boy?#310`}>
+                                <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
+                                <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{item.name} </Typography>
+                                <div style={{display: 'flex', height: 100}}>
+                                    <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
+                                        <p style={{color: '#999999', marginRight: 3}}>Owned</p>
+                                        <p style={{color: '#999999', marginRight: 3}}>By</p>
+                                        <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{item.owner}</p>
+                                        </Typography>
+                                </div>
+                                </Link>
+                            </Grid>
                 )
             })}
+            </Grid>
         </Fragment>)
     }
 
     const Artist = () => {
         let aboutMatch = useRouteMatch()
         return (
-            <div style={{marginTop: 99}}>
+            <div style={{marginTop: 30}}>
                 <Switch>
-                    <Route render={ () => {
-                    return( 
-                        <Grid container spacing={3}
-                        direction="row"
-                        justify="space-around"
-                        alignItem="center">
-                            <ArtistGeneral />
-                        </Grid>
-                    )}}/>
+                    <Route render={ () => <ArtistGeneral />}/>
                 </Switch>
             </div>
         )
@@ -337,31 +383,36 @@ export default function MainSection() {
         let aboutMatch = useRouteMatch()
         console.log("Here at artist")
         return (<Fragment>
+            <Grid container
+            direction="row"
+            justify="space-between"
+            alignItems="center" spacing={2} style={{marginTop: 22}}>
             {sorted.length > 0 &&
             sorted.map((item, index) => {
                 return (
-                    <Grid item xs={5} sm={4} md={3} lg={2} xl={1} style={{}}>
-                        <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
-                        <Link onClick={() => {window.scrollTo(0)}} style={{ textDecoration: 'none' }} to={`/bookpage/${createUrlForBookPage(item)}`} onClick={() => {/*updatePreviousRoute(window.location.href)*/}}>
-                        <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{item.name} </Typography>
-                        <div style={{display: 'flex', height: 100}}>
-                            <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
-                                <p style={{color: '#999999', marginRight: 3}}>Owned</p>
-                                <p style={{color: '#999999', marginRight: 3}}>By</p>
-                                <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{item.owner}</p>
-                                </Typography>
-                        </div>
-                        </Link>
-                    </Grid>
+                    <Grid item xs={6} sm={4} md={3} lg={2} xl={1} style={{height: 550, minHeight: 450, height: 400}}>
+                                <Link  style={{ textDecoration: 'none' }} to={`/bookpage/Dog?Boy?#310`}>
+                                <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
+                                <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{item.name} </Typography>
+                                <div style={{display: 'flex', height: 100}}>
+                                    <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
+                                        <p style={{color: '#999999', marginRight: 3}}>Owned</p>
+                                        <p style={{color: '#999999', marginRight: 3}}>By</p>
+                                        <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{item.owner}</p>
+                                        </Typography>
+                                </div>
+                                </Link>
+                            </Grid>
                 )
             })}
+            </Grid>
         </Fragment>)
     }
 
     const Owner = () => {
         let aboutMatch = useRouteMatch()
         return (
-            <div style={{marginTop: 99}}>
+            <div style={{marginTop: 30}}>
                 <Switch>
                     {/*<Route path='/year/id'>
                         {sorted ? sorted.map((item, index) => {
@@ -370,15 +421,7 @@ export default function MainSection() {
                             )
                         }):undefined}
                     </Route>*/}
-                    <Route render={ () => {
-                    return( 
-                        <Grid container spacing={3}
-                        direction="row"
-                        justify="space-around"
-                        alignItem="center">
-                            <OwnerGeneral />
-                        </Grid>
-                    )}}/>
+                    <Route render={ () => <OwnerGeneral />}/>
                 </Switch>
             </div>
         )
@@ -387,36 +430,30 @@ export default function MainSection() {
     const OwnerGeneral = () => {
         console.log("Here at owner")
         return (<Fragment>
+            <Grid container
+            direction="row"
+            justify="space-between"
+            alignItems="center" spacing={2} style={{marginTop: 22}}>
             {sorted.length > 0 &&
             sorted.map((item, index) => {
                 return (
-                    <Grid item xs={6} sm={4} md={3} lg={2} xl={1} style={{}}>
-                        <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
-                        <Link onClick={() => {window.scrollTo(0)}} style={{ textDecoration: 'none' }} to={`/bookpage/${createUrlForBookPage(item)}`} onClick={() => {/*updatePreviousRoute(window.location.href)*/}}>
-                        <Typography noWrap={false} style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{item.name} </Typography>
-                        <div style={{display: 'flex', height: 100, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis'}}>
-                            <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
-                                <p style={{color: '#999999', marginRight: 3}}>Owned</p>
-                                <p style={{color: '#999999', marginRight: 3}}>By</p>
-                                <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{item.owner}</p>
-                                </Typography>
-                        </div>
-                        </Link>
-                    </Grid>
+                    <Grid item xs={6} sm={4} md={3} lg={2} xl={1} style={{height: 550, minHeight: 450, height: 400}}>
+                                <Link  style={{ textDecoration: 'none' }} to={`/bookpage/Dog?Boy?#310`}>
+                                <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
+                                <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{item.name} </Typography>
+                                <div style={{display: 'flex', height: 100}}>
+                                    <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
+                                        <p style={{color: '#999999', marginRight: 3}}>Owned</p>
+                                        <p style={{color: '#999999', marginRight: 3}}>By</p>
+                                        <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{item.owner}</p>
+                                        </Typography>
+                                </div>
+                                </Link>
+                            </Grid>
                 )
             })}
+            </Grid>
         </Fragment>)
-    }
-
-    const Random = () => {
-        console.log("Here at random")
-        let otherMatch = useRouteMatch()
-        console.log(otherMatch)
-        return (
-            <div>
-                <h1 style={{marginTop: 0}}>Hello From Other</h1>
-            </div>
-        )
     }
 
     const handleChange = (event) => {
@@ -427,10 +464,10 @@ export default function MainSection() {
             return
         }
 
-        updateSearched(testSearch.filter((item, index) => {
+        updateSearched(comicsStore.filter((item, index) => {
             return !item.name.toLowerCase().indexOf(val.toLowerCase())
         }))
-    
+        sortSetByKey(window.location.pathname.split("/")[1])
     }
 
     const updateTabSelect = (item) => {
@@ -440,7 +477,7 @@ export default function MainSection() {
 
     return (
         <Fragment>
-                <div className="main_section" style={{width: "100%", minHeight: window.innerWidth, 
+                <div className="main_section" style={{width: "100%", minHeight: window.innerHeight, 
                 backgroundColor: "#333333", display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <div style={{backgroundColor: "#535353", height: 73, width: "100%", display: 'flex', justifyContent: "center"}}>
                         <div style={{width: "96%", 
@@ -450,7 +487,7 @@ export default function MainSection() {
                         </div>
                     </div>
                     <div style={{height: "100%", width: "96%"}}>
-                        { currentRoute === "/bookpage" && <div className={classes.search}>
+                        { currentRoute !== "/bookpage" && <div className={classes.search}>
                             <div className={classes.searchIcon}>
                                 <SearchIcon style={{width: 60, height: 32.4}}/>
                             </div>
@@ -460,14 +497,14 @@ export default function MainSection() {
                         </div>}
                         <div style={{display: 'flex', flexDirection: 'column'}}>
                             <div style={{display: 'flex'}}>
-                                {currentRoute === "/bookpage" && <CategoryTabs changeTab={updateTabSelect}/>}
+                                {currentRoute !== "/bookpage" && <CategoryTabs changeTab={updateTabSelect}/>}
                             </div>
                             <div>
                                 <Route path={'/year' || '/'} exact component={Year}/>
                                 <Route path='/writer' exact component={Writer}/>
                                 <Route path='/artist' exact component={Artist}/>
                                 <Route path='/owner' exact component={Owner}/>
-                                <Route path='/random' exact component={Random}/>
+                                <Route path='/random' exact component><Random count={(comicsStore ? comicsStore.length -1 :25)} /> </Route >
                                 <Route path='/bookpage' component><BookPage name={bookPageRoute}/></Route>
                                 {searched ? searched.map((item, index) => {
                                     return (
