@@ -57,27 +57,27 @@ export const Random = (props) => {
         return
     return (<div>
         <Fragment>
-        <Grid container direction="row" justify="flex-start" alignItems="flex-start" spacing={2} style={{marginTop: 30}}>
+        <div style={{ marginTop: 22, alignContent: 'space-between', display: 'flex', flexWrap: 'wrap', justifyContent: 'center'}}>
 
             {randomArray.length > 0 &&
                 randomArray.map((item, index) => {
                     return (
-                        <Grid item xs={6} sm={4} md={3} lg={2} xl={1} style={{height: 550, minHeight: 450, height: 400}}>
-                            
-                            <img onClick={() => {window.location.href = `/bookpage/${createUrlForBookPage(comicsStore[item])}`}} style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
-                            <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{comicsStore[item].name} </Typography>
-                            <div style={{display: 'flex', height: 100}}>
-                                <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
-                                    <p style={{color: '#999999', marginRight: 3}}>Owned</p>
-                                    <p style={{color: '#999999', marginRight: 3}}>By</p>
-                                    <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{comicsStore[item].owner}</p>
-                                    </Typography>
+                        <div style={{height: 500, minHeight: 400, display: 'flex', flexDirection: 'column', alignContent: 'space-between', justifyContent: 'center', width: 274, marginLeft: 2}}>
+                        <div style={{maxWidth: 272, height: 500}}>
+                                <img onClick={() => {window.location.href = `/bookpage/${createUrlForBookPage(comicsStore[item])}`}} style={{minWidth: 100, maxWidth: 250, width: "100%", minHeight: 20, height: "auto", maxHeight: 370}} src={BlankIcon}></img>
+                                <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: "1.3rem", display: 'flex', marginTop: 0}}>{comicsStore[item].name} </Typography>
+                                <div style={{display: 'flex', height: 100}}>
+                                    <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
+                                        <p style={{color: '#999999', marginRight: 3}}>Owned</p>
+                                        <p style={{color: '#999999', marginRight: 3}}>By</p>
+                                        <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{comicsStore[item].owner}</p>
+                                        </Typography>
+                                </div>
                             </div>
-                        </Grid>
-                    )
-                })
-            }
-        </Grid>
+                        </div>
+                )
+            })}
+            </div>
         </Fragment>
         </div>
     )

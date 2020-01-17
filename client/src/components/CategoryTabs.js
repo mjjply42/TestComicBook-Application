@@ -33,6 +33,7 @@ export const CategoryTabs = (props) => {
 
     return (
         <Fragment>
+            <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center'}}>
             {buttonTabs ? buttonTabs.map((item, index) => {
                 return ( item.selected ?
                     <label htmlFor="text-button-file">
@@ -47,6 +48,7 @@ export const CategoryTabs = (props) => {
                     </label> 
                 )
             }): undefined}
+            </div>
         </Fragment>
         )
 }

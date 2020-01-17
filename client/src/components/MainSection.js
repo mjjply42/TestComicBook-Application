@@ -10,15 +10,16 @@ import { Route, Link, useRouteMatch, useParams, Switch } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { createBrowserHistory } from 'history';
 import { CategoryTabs } from './CategoryTabs'
-import { WriterGeneral, Writer } from './Writer.js'
-import { ArtistGeneral, Artist } from './Artist.js'
-import { OwnerGeneral, Owner } from './Owner.js'
+import { Owner } from './Owner.js'
+import { Writer } from './Writer.js'
+import { Artist } from './Artist.js'
 import { Random } from './Random.js'
 import ComicLogo from '../img/ComicClan.png'
 import ComicIcon from '../img/IconShape.png'
 import BlankIcon from '../img/Rectangle.png'
 import EmptyStarIcon from '../img/emptyStar.png'
 import FullStarIcon from '../img/fullStar.png'
+import { Standard } from '../utils/standard.js'
 
 const validSorts = ["year", "owner", "artist", "writer", "random", ""]
 
@@ -57,9 +58,7 @@ export default function MainSection() {
 
 
     useEffect(() => {
-        console.log(comicsStore)
         updateComics(comicsStore)
-        console.log("CUR ", currentKey)
         if (comicsStore.length > 0)
         {
             sortSetByKey(currentKey, comicsStore)
@@ -68,7 +67,6 @@ export default function MainSection() {
     }, [comicsStore])
 
     useEffect(() => {
-        console.log("SIGNAL ", bookpageSignal)
     },[bookpageSignal])
 
     const getCurrentBookRoute = () => {
@@ -86,7 +84,6 @@ export default function MainSection() {
         let newYearArr = []
         let year = 0
         let index = 0
-        console.log("KEY ", key)
         if (!comicsStore.length > 0)
             return
         if (!validSorts.includes(key))
@@ -113,10 +110,7 @@ export default function MainSection() {
             updateSortSet(newYearArr)
         }
         else if (source === "search" && key !== 'year')
-        {
-            console.log(array, key)
             updateSortSet(JSON.parse(JSON.stringify(array.sort(await dynamicSort(key)))))
-        }
         else
         {
             arr = JSON.parse(JSON.stringify(array.sort(await dynamicSort(key))))
@@ -143,20 +137,11 @@ export default function MainSection() {
     }
 
     const Year = () => {
-        let aboutMatch = useRouteMatch()
-        console.log("ITS YEAR")
         return (
             <div>
                 <Switch>
-                    {/*<Route path='/year/id'>
-                        {sorted ? sorted.map((item, index) => {
-                            return (
-                                <AboutFull info={item}/>
-                            )
-                        }):undefined}
-                    </Route>*/}
                     <Route render={ () => 
-                            <YearGeneral />}/>
+                        <YearGeneral />}/>
                 </Switch>
             </div>
         )
@@ -164,15 +149,6 @@ export default function MainSection() {
 
 
     const YearGeneral = () => {
-        let year = 0
-        const createUrlForBookPage = (item) => {
-            console.log(item)
-            let itemSplit = item.name.split(" ")
-            let urlPath = itemSplit.join("?")
-            let pathname = window.location.pathname.split("/")[1]
-            //updateBookPageRoute(`/${urlPath}`)
-            return `${urlPath}`
-        }
         return (<Fragment>
                 {sorted.length > 0 &&
                 sorted.map((item, index) => {
@@ -182,17 +158,9 @@ export default function MainSection() {
                             <Grid container direction="row" justify="flex-start" alignItems="flex-start" spacing={2}>
                             {item.map((it, index) => {
                                 return (
-                                    <Grid item xs={5} sm={4} md={3} lg={2} xl={1} style={{}}>
-                                    <img onClick={() => {window.location.href = `/bookpage/${createUrlForBookPage(it)}`}} style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
-                                    <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{it.name} </Typography>
-                                    <div style={{display: 'flex', height: 100}}>
-                                        <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
-                                            <p style={{color: '#999999', marginRight: 3}}>Owned</p>
-                                            <p style={{color: '#999999', marginRight: 3}}>By</p>
-                                            <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{it.owner}</p>
-                                        </Typography>
-                                    </div>
-                                    </Grid>
+                                    <>
+                                        <Standard item={it}/>
+                                    </>
                                 )
                             })
                             }
@@ -207,11 +175,9 @@ export default function MainSection() {
                 )
     }
 
-    const BookPage = () => {    
-        //let comicItem = getCurrentBookRoute()
+    const BookPage = () => {
         dispatch({type: 'update-bookpage-signal', data: true})
         if (currentRoute)
-            console.log(currentRoute)
         return (
             <div>
                 <div style={{display: 'flex', marginTop: 40, flexDirection: 'row'}}>
@@ -220,7 +186,7 @@ export default function MainSection() {
                 </div>
                 {currentRoute &&
                 <Fragment><div style={{ display: 'flex', flexWrap: 'wrap', marginTop: 30, justifyContent: 'center'}}>
-                    <img style={{minWidth: 300, minHeight: 200/*, width: 336, height: 517*/, width: "24.2%", height: 517}} src={BlankIcon}></img>
+                    <img style={{minWidth: 300, minHeight: 200, width: "24.2%", height: 517}} src={BlankIcon}></img>
                     <div style={{marginLeft: 20, display: 'flex', flexDirection: 'column', width: "74%"}}>
                         <div style={{display: 'flex', flexWrap: 'wrap', alignItems: 'center'}}>
                         <div style={{display: 'flex', justifyContent: 'flex-start', alignItems: 'center', maxWidth: '80%', minWidth: '50%'}}>
@@ -282,6 +248,8 @@ export default function MainSection() {
             updateSearched([])
             return
         }
+        if (comicsStore.length < 0)
+            return
         let result = comicsStore.filter((item, index) => {
             return !item.name.toLowerCase().indexOf(val.toLowerCase())
         })
@@ -290,8 +258,40 @@ export default function MainSection() {
     }
 
     const updateTabSelect = (item) => {
-        console.log("HERE")
         sortSetByKey(item.path.split("/")[1])
+    }
+
+    const Search = () => {
+        const createUrlForBookPage = (item) => {
+            let itemSplit = item.name.split(" ")
+            let urlPath = itemSplit.join("?")
+            let pathname = window.location.pathname.split("/")[1]
+            return `${urlPath}`
+        }
+        return (
+            <>
+            <Grid container
+        direction="row"
+        justify="space-between"
+        alignItems="center" spacing={2} style={{marginTop: 22}}>
+            {searched ? searched.map((item, index) => {
+                return (
+                    <Grid key={index} item xs={6} sm={4} md={3} lg={2} xl={1} style={{height: 550, minHeight: 450, height: 360}}>
+                            <img onClick={() => {window.location.href = `/bookpage/${createUrlForBookPage(item)}`}}  style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
+                            <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{item.name} </Typography>
+                            <div style={{display: 'flex', height: 100}}>
+                                <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
+                                    <p style={{color: '#999999', marginRight: 3}}>Owned</p>
+                                    <p style={{color: '#999999', marginRight: 3}}>By</p>
+                                    <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{item.owner}</p>
+                                    </Typography>
+                            </div>
+                        </Grid>
+                )
+            }): undefined }
+            </Grid>
+            </>
+        )
     }
 
     return (
@@ -299,7 +299,9 @@ export default function MainSection() {
                 <div className="main_section" style={{width: "100%", minHeight: window.innerHeight, 
                 backgroundColor: "#333333", display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
                     <div style={{backgroundColor: "#535353", height: 73, width: "100%", display: 'flex', justifyContent: "center"}}>
-                        <div style={{width: "96%", 
+                        <div onClick={() => {
+                            window.location.href = '/'
+                        }} style={{width: "96%", 
                                     height: "100%", display: "flex", alignItems: "center", justifyContent: "flex-start"}}>
                             <img style={{minWidth: 20, width: '2.17%', marginRight: 10, marginTop: 3}} src={ComicIcon}></img>
                             <img style={{minWidth: 100, width: '9.76%'}} src={ComicLogo}></img>
@@ -319,7 +321,8 @@ export default function MainSection() {
                                 {!bookpageSignal && <CategoryTabs changeTab={updateTabSelect}/>}
                             </div>
                             <div>
-                                <Route onClick={() => {updateCurrentRoute('/year')}} path={'/year' || '/'} exact component={Year}/>
+                                <Route onClick={() => {updateCurrentRoute('/')}} path={'/'} exact component={Search}/>
+                                <Route onClick={() => {updateCurrentRoute('/year')}} path={'/year'} exact component={Year}/>
                                 <Route onClick={() => {updateCurrentRoute('/writer')}} path='/writer' exact component>< Writer sorted={(sorted ? sorted : [])} /></Route>
                                 <Route onClick={() => {updateCurrentRoute('/artist')}} path='/artist' exact component><Artist sorted={(sorted ? sorted : [])}/></Route>
                                 <Route onClick={() => {updateCurrentRoute('/owner')}} path='/owner' exact component> <Owner sorted={(sorted ? sorted : [])}/></Route>
@@ -384,7 +387,7 @@ const useStyles = makeStyles(theme => ({
         marginLeft: 56,
         color: '#777777',
         marginTop: -3,
-        fontSize: 20,
+        fontSize: '1.1rem',
         fontWeight: 'heavy',
     },
     }));
