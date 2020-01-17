@@ -10,6 +10,10 @@ import { Route, Link, useRouteMatch, useParams, Switch } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { createBrowserHistory } from 'history';
 import { CategoryTabs } from './CategoryTabs'
+import { WriterGeneral, Writer } from './Writer.js'
+import { ArtistGeneral, Artist } from './Artist.js'
+import { OwnerGeneral, Owner } from './Owner.js'
+import { Random } from './Random.js'
 import ComicLogo from '../img/ComicClan.png'
 import ComicIcon from '../img/IconShape.png'
 import BlankIcon from '../img/Rectangle.png'
@@ -57,7 +61,7 @@ export default function MainSection() {
         console.log("CUR ", currentKey)
         if (comicsStore.length > 0)
         {
-            sortSetByKey(currentKey)
+            sortSetByKey(currentKey, comicsStore)
             updateCurrentRoute(getCurrentBookRoute())
         }
     }, [comicsStore])
@@ -72,7 +76,7 @@ export default function MainSection() {
         return comicItem 
     }
 
-    const sortSetByKey  = async (key) => {
+    const sortSetByKey  = async (key, array = comicsStore, source) => {
         let arr = []
         let newYearArr = []
         let year = 0
@@ -114,9 +118,11 @@ export default function MainSection() {
             newYearArr[0].push(arr[0])
             newYearArr[0].push(arr[0])
         }
+        else if (source === "search")
+            updateSortSet(JSON.parse(JSON.stringify(array.sort(await dynamicSort(key)))))
         else
         {
-            arr = JSON.parse(JSON.stringify(comicsStore.sort(await dynamicSort(key))))
+            arr = JSON.parse(JSON.stringify(array.sort(await dynamicSort(key))))
             updateSortSet(arr)
         }
     }
@@ -141,6 +147,7 @@ export default function MainSection() {
 
     const Year = () => {
         let aboutMatch = useRouteMatch()
+        console.log("ITS YEAR")
         return (
             <div>
                 <Switch>
@@ -273,189 +280,6 @@ export default function MainSection() {
         )
     }
 
-    const Random = (props) => {
-        let valueArray = []
-        const [randomArray, updateRandomArray] = useState([])
-
-        useEffect(() => {
-            if (comicsStore.length > 0)
-            {
-                let i = 0
-                while (i < props.count)
-                {
-                    let result = Math.floor((Math.random() * comicsStore.length-1) + 1)
-                    if (!valueArray.includes(result))
-                        valueArray.push(result)
-                    else
-                        continue
-                    i++
-                }
-            }
-            updateRandomArray(valueArray)
-        },[comicsStore])
-
-        console.log("Here at random", valueArray)
-        let otherMatch = useRouteMatch()
-        console.log(otherMatch)
-        if (comicsStore.length < 1)
-            return
-        return (<div>
-            <Fragment>
-            <Grid container direction="row" justify="flex-start" alignItems="flex-start" spacing={2} style={{marginTop: 30}}>
-    
-                {randomArray.length > 0 &&
-                    randomArray.map((item, index) => {
-                        return (
-                            <Grid item xs={6} sm={4} md={3} lg={2} xl={1} style={{height: 550, minHeight: 450, height: 400}}>
-                                <Link  style={{ textDecoration: 'none' }} to={`/bookpage/Dog?Boy?#310`}>
-                                <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
-                                <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{comicsStore[item].name} </Typography>
-                                <div style={{display: 'flex', height: 100}}>
-                                    <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
-                                        <p style={{color: '#999999', marginRight: 3}}>Owned</p>
-                                        <p style={{color: '#999999', marginRight: 3}}>By</p>
-                                        <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{comicsStore[item].owner}</p>
-                                        </Typography>
-                                </div>
-                                </Link>
-                            </Grid>
-                        )
-                    })
-                }
-            </Grid>
-            </Fragment>
-            </div>
-        )
-    }
-
-    const Writer = () => {
-        let aboutMatch = useRouteMatch()
-        return (
-            <div style={{marginTop: 30}}>
-                <Switch>
-                    <Route render={ () => <WriterGeneral />}/>
-                </Switch>
-            </div>
-        )
-    }
-
-    const WriterGeneral = () => {
-        console.log("Here at writer")
-        return (<Fragment>
-            <Grid container
-            direction="row"
-            justify="space-between"
-            alignItems="center" spacing={2} style={{marginTop: 22}}>
-            {sorted.length > 0 &&
-            sorted.map((item, index) => {
-                return (
-                    <Grid item xs={6} sm={4} md={3} lg={2} xl={1} style={{height: 550, minHeight: 450, height: 400}}>
-                                <Link  style={{ textDecoration: 'none' }} to={`/bookpage/Dog?Boy?#310`}>
-                                <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
-                                <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{item.name} </Typography>
-                                <div style={{display: 'flex', height: 100}}>
-                                    <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
-                                        <p style={{color: '#999999', marginRight: 3}}>Owned</p>
-                                        <p style={{color: '#999999', marginRight: 3}}>By</p>
-                                        <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{item.owner}</p>
-                                        </Typography>
-                                </div>
-                                </Link>
-                            </Grid>
-                )
-            })}
-            </Grid>
-        </Fragment>)
-    }
-
-    const Artist = () => {
-        let aboutMatch = useRouteMatch()
-        return (
-            <div style={{marginTop: 30}}>
-                <Switch>
-                    <Route render={ () => <ArtistGeneral />}/>
-                </Switch>
-            </div>
-        )
-    }
-
-    const ArtistGeneral = () => {
-        let aboutMatch = useRouteMatch()
-        console.log("Here at artist")
-        return (<Fragment>
-            <Grid container
-            direction="row"
-            justify="space-between"
-            alignItems="center" spacing={2} style={{marginTop: 22}}>
-            {sorted.length > 0 &&
-            sorted.map((item, index) => {
-                return (
-                    <Grid item xs={6} sm={4} md={3} lg={2} xl={1} style={{height: 550, minHeight: 450, height: 400}}>
-                                <Link  style={{ textDecoration: 'none' }} to={`/bookpage/Dog?Boy?#310`}>
-                                <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
-                                <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{item.name} </Typography>
-                                <div style={{display: 'flex', height: 100}}>
-                                    <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
-                                        <p style={{color: '#999999', marginRight: 3}}>Owned</p>
-                                        <p style={{color: '#999999', marginRight: 3}}>By</p>
-                                        <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{item.owner}</p>
-                                        </Typography>
-                                </div>
-                                </Link>
-                            </Grid>
-                )
-            })}
-            </Grid>
-        </Fragment>)
-    }
-
-    const Owner = () => {
-        let aboutMatch = useRouteMatch()
-        return (
-            <div style={{marginTop: 30}}>
-                <Switch>
-                    {/*<Route path='/year/id'>
-                        {sorted ? sorted.map((item, index) => {
-                            return (
-                                <AboutFull info={item}/>
-                            )
-                        }):undefined}
-                    </Route>*/}
-                    <Route render={ () => <OwnerGeneral />}/>
-                </Switch>
-            </div>
-        )
-    }
-
-    const OwnerGeneral = () => {
-        console.log("Here at owner")
-        return (<Fragment>
-            <Grid container
-            direction="row"
-            justify="space-between"
-            alignItems="center" spacing={2} style={{marginTop: 22}}>
-            {sorted.length > 0 &&
-            sorted.map((item, index) => {
-                return (
-                    <Grid item xs={6} sm={4} md={3} lg={2} xl={1} style={{height: 550, minHeight: 450, height: 400}}>
-                                <Link  style={{ textDecoration: 'none' }} to={`/bookpage/Dog?Boy?#310`}>
-                                <img style={{minWidth: 100, height: 300}} src={BlankIcon}></img>
-                                <Typography style={{color: '#CCCCCC', textAlign: 'left', marginLeft: 10, fontSize: 22, display: 'flex', alignSelf: 'flex-start', marginTop: 0}}>{item.name} </Typography>
-                                <div style={{display: 'flex', height: 100}}>
-                                    <Typography style={{textAlign: 'left',marginLeft: 10, fontSize: 16, display: 'flex', alignSelf: 'flex-start', marginTop: 0, marginRight: 4}}>
-                                        <p style={{color: '#999999', marginRight: 3}}>Owned</p>
-                                        <p style={{color: '#999999', marginRight: 3}}>By</p>
-                                        <p style={{color: '#CCCCCC', fontWeight: 'bold'}}>{item.owner}</p>
-                                        </Typography>
-                                </div>
-                                </Link>
-                            </Grid>
-                )
-            })}
-            </Grid>
-        </Fragment>)
-    }
-
     const handleChange = (event) => {
         let val = event.target.value
         if (val === "")
@@ -463,11 +287,11 @@ export default function MainSection() {
             updateSearched([])
             return
         }
-
-        updateSearched(comicsStore.filter((item, index) => {
+        let result = comicsStore.filter((item, index) => {
             return !item.name.toLowerCase().indexOf(val.toLowerCase())
-        }))
-        sortSetByKey(window.location.pathname.split("/")[1])
+        })
+        updateSearched(result)
+        sortSetByKey(currentKey, result, "search")
     }
 
     const updateTabSelect = (item) => {
@@ -501,19 +325,11 @@ export default function MainSection() {
                             </div>
                             <div>
                                 <Route path={'/year' || '/'} exact component={Year}/>
-                                <Route path='/writer' exact component={Writer}/>
-                                <Route path='/artist' exact component={Artist}/>
-                                <Route path='/owner' exact component={Owner}/>
+                                <Route path='/writer' exact component>< Writer sorted={(sorted ? sorted : [])} /></Route>
+                                <Route path='/artist' exact component><Artist sorted={(sorted ? sorted : [])}/></Route>
+                                <Route path='/owner' exact component> <Owner sorted={(sorted ? sorted : [])}/></Route>
                                 <Route path='/random' exact component><Random count={(comicsStore ? comicsStore.length -1 :25)} /> </Route >
                                 <Route path='/bookpage' component><BookPage name={bookPageRoute}/></Route>
-                                {searched ? searched.map((item, index) => {
-                                    return (
-                                        <div style={{display: "inline-block", margin: 10}}>
-                                            <h1 style={{marginTop: 0}}>{item.name}</h1>
-                                            <h2 style={{marginTop: 0}}>{item.name}</h2>
-                                        </div>
-                                    )
-                                }): undefined }
                             </div>
                         </div>
                     </div>
