@@ -337,11 +337,11 @@ export default function MainSection() {
                                 {!bookpageSignal && <CategoryTabs changeTab={updateTabSelect}/>}
                             </div>
                             <div>
-                                <Route onClick={() => {updateCurrentRoute('/')}} path={'/'} exact component={Search}/>
-                                <Route onClick={() => {updateCurrentRoute('/year')}} path={'/year'} exact component={Year}/>
-                                <Route onClick={() => {updateCurrentRoute('/writer')}} path='/writer' exact component>< Writer sorted={(sorted ? sorted : [])} /></Route>
-                                <Route onClick={() => {updateCurrentRoute('/artist')}} path='/artist' exact component><Artist sorted={(sorted ? sorted : [])}/></Route>
-                                <Route onClick={() => {updateCurrentRoute('/owner')}} path='/owner' exact component> <Owner sorted={(sorted ? sorted : [])}/></Route>
+                                <Route onClick={() => {updateCurrentRoute('/')}} path={'/'} component={Search}/>
+                                <Route onClick={() => {updateCurrentRoute('/year')}} path={'/year'} component={Year}/>
+                                <Route onClick={() => {updateCurrentRoute('/writer')}} path='/writer' component>< Writer sorted={(sorted ? sorted : [])} /></Route>
+                                <Route onClick={() => {updateCurrentRoute('/artist')}} path='/artist' component><Artist sorted={(sorted ? sorted : [])}/></Route>
+                                <Route onClick={() => {updateCurrentRoute('/owner')}} path='/owner' component> <Owner sorted={(sorted ? sorted : [])}/></Route>
                                 <Route onClick={() => {
                                     updateCurrentRoute('/random')
                                     }} path='/random' exact component><Random sorted={sorted} count={(comicsStore ? comicsStore.length -1 :25)} /> </Route >
